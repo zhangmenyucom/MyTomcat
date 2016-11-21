@@ -9,7 +9,7 @@ import java.net.Socket;
 public class Tomcat {
 	private static int count;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		ServerSocket ss = null;
 		Socket socket = null;
@@ -21,16 +21,30 @@ public class Tomcat {
 				count++;
 				System.out.println("客户断第" + count + "次访问服务器");
 				InputStream is = socket.getInputStream();
-				Request request=new Request(is);
+				Request request = new Request(is);
 				OutputStream out = socket.getOutputStream();
-				String responseHtml = "<html><head><title>repose msg</title></head><body><h1>happy midmoon festelval</h1></body><html>";
-				out.write(responseHtml.getBytes());
-				out.flush();
-				out.close();
+				Response response = new Response(out);
+				if (isStaticResource(request.getUri())) {
+					response.write(request.getUri().substring(1));
+				} else {
+					response.writeContent("<html><body>404</body></html>");
+				}
+				socket.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			ss.close();
 		}
 	}
 
+	public static boolean isStaticResource(String path) {
+		String[] suffixs = { ".html", ".css", ".js", ".jpg" };
+		for (int i = 0; i < suffixs.length; i++) {
+			if (path.indexOf(suffixs[i]) != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

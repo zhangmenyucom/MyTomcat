@@ -13,7 +13,7 @@ public class Request {
 		if (len > 0) {
 			String msg = new String(buffer, 0, len);
 			uri = msg.substring(msg.indexOf("/"), msg.indexOf("HTTP/1.1") - 1);
-            System.out.println("+++++"+uri+"++++++");
+            System.out.println("+++++"+uri+"+++++");
 		} else {
 			System.out.println("invalid request");
 		}
