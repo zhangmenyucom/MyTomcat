@@ -24,17 +24,14 @@ public class Tomcat {
 				Request request = new Request(is);
 				OutputStream out = socket.getOutputStream();
 				Response response = new Response(out);
-				if (isStaticResource(request.getUri())) {
-					response.write(request.getUri().substring(1));
-				} else {
-					response.writeContent("<html><body>404</body></html>");
-				}
+				Servlet servlet = new Servlet();
+				servlet.doHandle(request, response);
 				socket.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			ss.close();
+			// ss.close();
 		}
 	}
 
